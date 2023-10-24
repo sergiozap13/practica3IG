@@ -12,7 +12,7 @@
 using namespace std;
 
 // tipos
-typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, CILINDRO, CONO, ESFERA, EXTRUSION, EXCAVADORA} _tipo_objeto;
+typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, CILINDRO, CONO, ESFERA, EXTRUSION, EXCAVADORA, LAVADORA} _tipo_objeto;  // todo Añadir lavadora
 _tipo_objeto t_objeto=CUBO;
 _modo   modo=POINTS;
 
@@ -38,6 +38,7 @@ _cono cono(1,2,6);
 _esfera esfera(1,6,6);
 _excavadora excavadora;
 _extrusion *extrusion;
+_lavadora lavadora;
 
 // _objeto_ply *ply;
 
@@ -126,8 +127,8 @@ switch (t_objeto){
         case ESFERA: esfera.draw(modo,1.0,0.0,0.0,5);break;
         case EXCAVADORA: excavadora.draw(modo,1.0,0.0,0.0,5);break;
         case EXTRUSION: extrusion->draw(modo,1.0,0.0,0.0,5);break;
+        case LAVADORA: lavadora.draw(modo, 0.5, 0.5,0.5,1);break;
 	}
-
 }
 
 
@@ -192,6 +193,7 @@ switch (toupper(Tecla1)){
         case 'E':t_objeto=ESFERA;break;
         case 'A':t_objeto=EXCAVADORA;break;
         case 'X':t_objeto=EXTRUSION;break;
+        case 'M':t_objeto=LAVADORA;break;
 	}
 glutPostRedisplay();
 }
@@ -214,8 +216,8 @@ switch (Tecla1){
    case GLUT_KEY_RIGHT:Observer_angle_y++;break;
    case GLUT_KEY_UP:Observer_angle_x--;break;
    case GLUT_KEY_DOWN:Observer_angle_x++;break;
-   case GLUT_KEY_PAGE_UP:Observer_distance*=1.2;break;
-   case GLUT_KEY_PAGE_DOWN:Observer_distance/=1.2;break;
+   case GLUT_KEY_F11:Observer_distance*=1.2;break;
+   case GLUT_KEY_F12:Observer_distance/=1.2;break;
 	
    case GLUT_KEY_F1:excavadora.giro_cabina+=5;break;
    case GLUT_KEY_F2:excavadora.giro_cabina-=5;break;
@@ -256,7 +258,7 @@ void initialize(void)
     Back_plane=1000;
 
     // se incia la posicion del observador, en el eje z
-    Observer_distance=4*Front_plane;
+    Observer_distance=10*Front_plane;
     Observer_angle_x=0;
     Observer_angle_y=0;
 

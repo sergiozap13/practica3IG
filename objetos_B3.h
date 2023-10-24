@@ -274,3 +274,75 @@ _brazo brazo;
 _cabina cabina;
 _sustentacion sustentacion;
 };
+
+//************************************************************************
+// clase cuerpo 
+//************************************************************************
+class _cuerpo : public _triangulos3D{
+       public: _cuerpo();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
+       float ancho;
+       float alto;
+       float fondo;
+
+       protected:
+       _cubo cubo;
+       _cilindro rueda;
+};
+//************************************************************************
+// clase cajon 
+//************************************************************************
+class _cajon : public _triangulos3D{
+       public: _cajon();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
+       float ancho;
+       float alto;
+       float fondo;
+
+       protected:
+       _cubo cubo; // todo ver de que objeto hereda
+};
+
+//************************************************************************
+// clase puerta 
+//************************************************************************
+class _puerta : public _triangulos3D{
+       public: _puerta();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
+       float ancho;
+       float alto;
+       float fondo;
+
+       protected:
+       _cubo cubo; // todo ver de que objeto hereda
+};
+
+//************************************************************************
+// lavadora (montaje del objeto final)
+//************************************************************************
+class _lavadora : public _triangulos3D{
+       public: _lavadora();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
+       // float giro_cabina;
+       // float giro_primer_brazo;
+       // float giro_segundo_brazo;
+       // float giro_pala;
+
+       // float giro_primer_brazo_max;
+       // float giro_primer_brazo_min;
+       // float giro_segundo_brazo_max;
+       // float giro_segundo_brazo_min;
+       // float giro_pala_max;
+       // float giro_pala_min;
+
+       // float tamanio_pala;
+       
+       protected:
+       _puerta puerta;
+       _cajon cajon;
+       _cuerpo cuerpo;
+};

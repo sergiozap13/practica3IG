@@ -706,3 +706,114 @@ void _excavadora::draw(_modo modo, float r, float g, float b, float grosor)
   glPopMatrix();
 }
 
+//************************************************************************
+// práctica 3, objeto jerárquico articulado: Lavadora
+//************************************************************************
+
+//************************************************************************
+// piezas
+//************************************************************************
+
+//************************************************************************
+// puerta
+//************************************************************************
+_puerta::_puerta()
+{
+ 
+};
+
+void _puerta::draw(_modo modo, float r, float g, float b, float grosor)
+{
+  glPushMatrix();
+  glScalef(ancho, alto, fondo);
+  glTranslatef(0,0.5,0);
+  cubo.draw(modo, r, g, b, grosor);
+  glPopMatrix();
+};
+
+//************************************************************************
+// cajon
+//************************************************************************
+_cajon::_cajon()
+{
+ 
+};
+
+void _cajon::draw(_modo modo, float r, float g, float b, float grosor)
+{
+  glPushMatrix();
+  glScalef(ancho, alto, fondo);
+  glTranslatef(0.5,0,0);
+  cubo.draw(modo, r, g, b, grosor);
+  glPopMatrix();
+
+};
+//************************************************************************
+// cuerpo
+//************************************************************************
+_cuerpo::_cuerpo()
+{
+  ancho=4;
+  alto=5;
+  fondo=4;
+  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
+};
+
+void _cuerpo::draw(_modo modo, float r, float g, float b, float grosor)
+{
+  //cubo grande
+  glPushMatrix();
+  glScalef(ancho, alto, fondo);
+  glTranslatef(0,0,0);
+  cubo.draw(modo, r, g, b, grosor);
+
+  // cubo pequeño
+  glScalef(1.0,0.1,0.86);
+  glTranslatef(0,5.5,-0.08);
+  cubo.draw(modo, r, g, b, grosor);
+  glPopMatrix();
+};
+
+_lavadora::_lavadora()
+{
+  // giro_cabina = 0.0;
+  // giro_primer_brazo = 0.0;
+  // giro_primer_brazo_max = 0;
+  // giro_primer_brazo_min = -90;
+  // giro_segundo_brazo = 0.0;
+  // giro_segundo_brazo_max = 30;
+  // giro_segundo_brazo_min = 0;
+  // giro_pala = 0.0;
+  // giro_pala_max = 50.0;
+  // giro_pala_min = -90.0;
+
+  // tamanio_pala=0.15;
+};
+
+void _lavadora::draw(_modo modo, float r, float g, float b, float grosor)
+{
+   glPushMatrix();
+
+  // sustentacion.draw(modo, r, g, b, grosor);
+
+  // glTranslatef(0,(cabina.alto+sustentacion.alto)/2.0,0);
+  // glRotatef(giro_cabina,0,1,0);
+  // cabina.draw(modo, r, g, b, grosor);
+
+  // glTranslatef(cabina.ancho/2.0,0,0);
+  // glRotatef(giro_segundo_brazo,0,0,1);
+  // brazo.draw(modo, r, g, b, grosor);
+
+  // glTranslatef(brazo.ancho,0,0);
+  // glRotatef(giro_primer_brazo,0,0,1);
+  // brazo.draw(modo, r, g, b, grosor);
+
+  // glTranslatef(brazo.ancho,0,0);
+  // glRotatef(giro_pala,0,0,1);
+  // glTranslatef(tamanio_pala,0,0); // trasladamos 
+  //glScalef(3, 3, 3);
+  cuerpo.draw(modo, r, g, b, grosor);
+
+  glPopMatrix();
+}
+
