@@ -714,6 +714,24 @@ void _excavadora::draw(_modo modo, float r, float g, float b, float grosor)
 // piezas
 //************************************************************************
 
+
+//************************************************************************
+// rueda
+//************************************************************************
+_rueda::_rueda()
+{
+ 
+};
+
+void _rueda::draw(_modo modo, float r, float g, float b, float grosor)
+{
+  glPushMatrix();
+  glScalef(ancho, alto, fondo);
+  glTranslatef(0,0.5,0);
+  cilindro.draw(modo, r, g, b, grosor);
+  glPopMatrix();
+};
+
 //************************************************************************
 // puerta
 //************************************************************************
@@ -736,7 +754,10 @@ void _puerta::draw(_modo modo, float r, float g, float b, float grosor)
 //************************************************************************
 _cajon::_cajon()
 {
- 
+  ancho=1.5;
+  alto=0.5;
+  fondo=2;
+  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
 };
 
 void _cajon::draw(_modo modo, float r, float g, float b, float grosor)
@@ -754,13 +775,15 @@ void _cajon::draw(_modo modo, float r, float g, float b, float grosor)
 _cuerpo::_cuerpo()
 {
   ancho=4;
-  alto=5;
+  alto=6;
   fondo=4;
   colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
 };
 
 void _cuerpo::draw(_modo modo, float r, float g, float b, float grosor)
 {
+  // TODO: duda -> si el cuerpo tiene 2 cubos distintos, en el grafo de escena tambien?
+  // y esto sería un buen diseño?
   //cubo grande
   glPushMatrix();
   glScalef(ancho, alto, fondo);
@@ -776,7 +799,8 @@ void _cuerpo::draw(_modo modo, float r, float g, float b, float grosor)
 
 _lavadora::_lavadora()
 {
-  // giro_cabina = 0.0;
+  // TODO: cambiar nombres variables 
+  giro_cajon = 0.0;
   // giro_primer_brazo = 0.0;
   // giro_primer_brazo_max = 0;
   // giro_primer_brazo_min = -90;
@@ -792,6 +816,7 @@ _lavadora::_lavadora()
 
 void _lavadora::draw(_modo modo, float r, float g, float b, float grosor)
 {
+  // TODO: duda -> aqui solo se mueven los objetos completos???
    glPushMatrix();
 
   // sustentacion.draw(modo, r, g, b, grosor);
@@ -807,12 +832,20 @@ void _lavadora::draw(_modo modo, float r, float g, float b, float grosor)
   // glTranslatef(brazo.ancho,0,0);
   // glRotatef(giro_primer_brazo,0,0,1);
   // brazo.draw(modo, r, g, b, grosor);
+  
 
-  // glTranslatef(brazo.ancho,0,0);
+  
   // glRotatef(giro_pala,0,0,1);
   // glTranslatef(tamanio_pala,0,0); // trasladamos 
-  //glScalef(3, 3, 3);
+  // glScalef(3, 3, 3);
+  
   cuerpo.draw(modo, r, g, b, grosor);
+
+  // TODO: duda: por qué el cuerpo es 6 de alto y si trasladas 
+  //          el cajón 3.25 no está un poco mas arriba de la mitad (creo que resuelta)
+  glTranslatef(0,0,giro_cajon);
+  glTranslatef(-1.5,3.25,0);
+  cajon.draw(modo,0,0,0,grosor);
 
   glPopMatrix();
 }

@@ -321,13 +321,29 @@ class _puerta : public _triangulos3D{
 };
 
 //************************************************************************
+// clase rueda 
+//************************************************************************
+
+class _rueda : public _triangulos3D{
+       public: _rueda();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
+       float ancho;
+       float alto;
+       float fondo;
+
+       protected:
+       _cilindro cilindro; // todo ver de que objeto hereda
+};
+
+//************************************************************************
 // lavadora (montaje del objeto final)
 //************************************************************************
 class _lavadora : public _triangulos3D{
        public: _lavadora();
        void  draw(_modo modo, float r, float g, float b, float grosor);
 
-       // float giro_cabina;
+       float giro_cajon;
        // float giro_primer_brazo;
        // float giro_segundo_brazo;
        // float giro_pala;
