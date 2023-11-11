@@ -334,8 +334,6 @@ class _cuerpo : public _triangulos3D{
        protected:
        _cubo base;
        _cubo cubo_pequeño;
-       _cilindro rueda;
-
        
 };
 //************************************************************************
