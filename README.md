@@ -1,6 +1,7 @@
 # practica3IG: Lavadora
 Cuarta práctica de Ingeniería Informática en la Universidad de Granada
 ## Realizada por: Sergio Zapata De la Hoz
+![lavadora](https://github.com/sergiozap13/practica3IG/assets/56563008/9ad0706d-d89b-428e-bc34-a1b111dc8c08)
 
 ### Instrucciones de ejecución:
 Para ejecutar el programa abrir una terminal en la carpeta del proyecto y realizar el comando:
