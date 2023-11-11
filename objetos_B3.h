@@ -43,11 +43,11 @@ void 	draw(_modo modo, float r, float g, float b, float grosor);
 
 /* asignación de colores */
 void 	colors_random();
-void 	colors_chess(float r1, float g1, float b1, float r2, float g2, float b2);
+void 	colors_chess(float r1, float g1, float b1, float r2, float g2, float b2, float t);
 
 
 vector<_vertex3i> caras;
-vector<_vertex3f> colores_caras;
+vector<_vertex4f> colores_caras;
 };
 
 //*************************************************************************
@@ -61,7 +61,6 @@ vector<_vertex3f> colores_caras;
 class _cubo: public _triangulos3D
 {
 public:
-
 	_cubo(float tam=0.5);
 };
 
@@ -132,7 +131,7 @@ public:
 class _cilindro: public _rotacion
 {
 public:
-       _cilindro(float radio=1.0, float altura=2.0, int num=12);
+       _cilindro(float radio=1.0, float altura=2.0, int num=24);
 };
 
 //************************************************************************
@@ -275,6 +274,52 @@ _cabina cabina;
 _sustentacion sustentacion;
 };
 
+
+//************************************************************************
+// práctica 3, LAVADORA
+//************************************************************************
+
+//************************************************************************
+// piezas
+//************************************************************************
+
+//************************************************************************
+// clase ruleta
+//************************************************************************
+
+class _ruleta : public _triangulos3D{
+       public: _ruleta();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
+       float ancho_cilindro;
+       float alto_cilindro;
+       float fondo_cilindro;
+
+       float ancho_cubo;
+       float alto_cubo;
+       float fondo_cubo;
+
+       protected:
+       _cilindro cilindro;
+       _cubo cubo;
+};
+
+//************************************************************************
+// clase boton_apagado
+//************************************************************************
+
+class _boton_apagado : public _triangulos3D{
+       public: _boton_apagado();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
+       float ancho;
+       float alto;
+       float fondo;
+
+       protected:
+       _cilindro cilindro;
+};
+
 //************************************************************************
 // clase cuerpo 
 //************************************************************************
@@ -287,8 +332,11 @@ class _cuerpo : public _triangulos3D{
        float fondo;
 
        protected:
-       _cubo cubo;
+       _cubo base;
+       _cubo cubo_pequeño;
        _cilindro rueda;
+
+       
 };
 //************************************************************************
 // clase cajon 
@@ -302,7 +350,7 @@ class _cajon : public _triangulos3D{
        float fondo;
 
        protected:
-       _cubo cubo; // todo ver de que objeto hereda
+       _cubo cubo; 
 };
 
 //************************************************************************
@@ -312,12 +360,22 @@ class _puerta : public _triangulos3D{
        public: _puerta();
        void  draw(_modo modo, float r, float g, float b, float grosor);
 
-       float ancho;
-       float alto;
-       float fondo;
+       float ancho_cilindro;
+       float alto_cilindro;
+       float fondo_cilindro;
+
+       float ancho_cilindro2;
+       float alto_cilindro2;
+       float fondo_cilindro2;
+
+       float ancho_cubo;
+       float alto_cubo;
+       float fondo_cubo;
 
        protected:
-       _cubo cubo; // todo ver de que objeto hereda
+       _cilindro cilindro;
+       _cilindro cilindro2;
+       _cubo cubo;
 };
 
 //************************************************************************
@@ -328,12 +386,40 @@ class _rueda : public _triangulos3D{
        public: _rueda();
        void  draw(_modo modo, float r, float g, float b, float grosor);
 
+       float ancho_cilindro;
+       float alto_cilindro;
+       float fondo_cilindro;
+       
+       float ancho_base;
+       float alto_base;
+       float fondo_base;
+
+       float ancho_palo;
+       float alto_palo;
+       float fondo_palo;
+
+       protected:
+       _cilindro cilindro;
+       _cubo palo;
+       _cubo base;
+};
+
+
+
+//************************************************************************
+// clase tambor 
+//************************************************************************
+
+class _tambor : public _triangulos3D{
+       public: _tambor();
+       void  draw(_modo modo, float r, float g, float b, float grosor);
+
        float ancho;
        float alto;
        float fondo;
 
        protected:
-       _cilindro cilindro; // todo ver de que objeto hereda
+       _cilindro cilindro;
 };
 
 //************************************************************************
@@ -342,23 +428,39 @@ class _rueda : public _triangulos3D{
 class _lavadora : public _triangulos3D{
        public: _lavadora();
        void  draw(_modo modo, float r, float g, float b, float grosor);
+       // cajon y puerta
+       float posicion_cajon;
+       float cajon_max;
+       float cajon_min;
+       float giro_puerta;
+       float giro_puerta_max;
+       float giro_puerta_min;
+       // tambor
+       float giro_tambor;
+       // ruletas
+       float giro_ruleta1;
+       float giro_ruleta1_max;
+       float giro_ruleta1_min;
 
-       float giro_cajon;
-       // float giro_primer_brazo;
-       // float giro_segundo_brazo;
-       // float giro_pala;
+       float giro_ruleta2;
+       float giro_ruleta2_max;
+       float giro_ruleta2_min;
 
-       // float giro_primer_brazo_max;
-       // float giro_primer_brazo_min;
-       // float giro_segundo_brazo_max;
-       // float giro_segundo_brazo_min;
-       // float giro_pala_max;
-       // float giro_pala_min;
+       float color_r_boton;
+       // movimientos lavadora completa
+       float posicion_lavadora_z;
+       float giro_ruedas;
 
-       // float tamanio_pala;
+       // fin del lavado
+       float fin_lavado;
        
        protected:
        _puerta puerta;
        _cajon cajon;
        _cuerpo cuerpo;
+       _tambor tambor;
+       _ruleta ruleta1;
+       _ruleta ruleta2;
+       _boton_apagado boton_apagado;
+       _rueda rueda;
 };

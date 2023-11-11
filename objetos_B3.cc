@@ -106,7 +106,7 @@ int i;
 glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 glBegin(GL_TRIANGLES);
 for (i=0;i<caras.size();i++){
-	glColor3f(colores_caras[i].r,colores_caras[i].g,colores_caras[i].b);
+	glColor4f(colores_caras[i].r,colores_caras[i].g,colores_caras[i].b, colores_caras[i].a);
 	glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
 	glVertex3fv((GLfloat *) &vertices[caras[i]._1]);
 	glVertex3fv((GLfloat *) &vertices[caras[i]._2]);
@@ -148,7 +148,7 @@ for (i=0;i<n_c;i++)
 
 //*************************************************************************
 
-void _triangulos3D::colors_chess(float r1, float g1, float b1, float r2, float g2, float b2)
+void _triangulos3D::colors_chess(float r1, float g1, float b1, float r2, float g2, float b2, float t) // t = transparencia
 {
 int i, n_c;
 n_c=caras.size();
@@ -158,11 +158,13 @@ for (i=0;i<n_c;i++)
      {colores_caras[i].r=r1;
       colores_caras[i].g=g1;
       colores_caras[i].b=b1;
+      colores_caras[i].a=t;
      }
    else 
      {colores_caras[i].r=r2;
       colores_caras[i].g=g2;
       colores_caras[i].b=b2;
+      colores_caras[i].a=t;
      } 
   }
 }
@@ -442,14 +444,14 @@ colors_random();
 
 _cilindro::_cilindro(float radio, float altura, int num)
 {
-vector<_vertex3f> perfil;
-_vertex3f aux;
+  vector<_vertex3f> perfil;
+  _vertex3f aux;
 
-aux.x=radio; aux.y=-altura/2.0; aux.z=0.0;
-perfil.push_back(aux);
-aux.x=radio; aux.y=altura/2.0; aux.z=0.0;
-perfil.push_back(aux);
-parametros(perfil,num,1,1,0);
+  aux.x=radio; aux.y=-altura/2.0; aux.z=0.0;
+  perfil.push_back(aux);
+  aux.x=radio; aux.y=altura/2.0; aux.z=0.0;
+  perfil.push_back(aux);
+  parametros(perfil,num,1,1,0);
 }
 
 //************************************************************************
@@ -579,7 +581,7 @@ _pala::_pala(float radio, float ancho, int num)
       caras.push_back(cara_aux);
     }
     
-  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
+  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0,0);
 }
 
 //************************************************************************
@@ -591,7 +593,7 @@ _brazo::_brazo()
   ancho=0.6;
   alto=0.1;
   fondo=0.1;
-  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
+  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0,0);
 };
 
 void _brazo::draw(_modo modo, float r, float g, float b, float grosor)
@@ -612,7 +614,7 @@ _cabina::_cabina()
   ancho=0.4;
   alto=0.6;
   fondo=0.4;
-  cubo.colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
+  cubo.colors_chess(1.0,1.0,0.0,0.0,0.0,1.0,0);
 };
 
 void _cabina::draw(_modo modo, float r, float g, float b, float grosor)
@@ -633,7 +635,7 @@ _sustentacion::_sustentacion()
   alto=0.3;
   fondo=0.8;
   radio=0.15;
-  base.colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
+  base.colors_chess(1.0,1.0,0.0,0.0,0.0,1.0,0);
 };
 
 void _sustentacion::draw(_modo modo, float r, float g, float b, float grosor)
@@ -720,15 +722,41 @@ void _excavadora::draw(_modo modo, float r, float g, float b, float grosor)
 //************************************************************************
 _rueda::_rueda()
 {
- 
+  ancho_cilindro=0.1;
+  alto_cilindro = 0.1;
+  fondo_cilindro = 0.1;
+
+  ancho_palo = 0.03;
+  alto_palo = 0.1;
+  fondo_palo = 0.03;
+
+  ancho_base = 0.1;
+  alto_base = 0.01;
+  fondo_base = 0.1;
+
+  cilindro.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+  palo.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+  base.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
 };
 
 void _rueda::draw(_modo modo, float r, float g, float b, float grosor)
 {
   glPushMatrix();
-  glScalef(ancho, alto, fondo);
-  glTranslatef(0,0.5,0);
-  cilindro.draw(modo, r, g, b, grosor);
+  glScalef(ancho_cilindro, alto_cilindro, fondo_cilindro);
+  glRotatef(90,1,0,0);
+  cilindro.draw(modo, 0.2, 0.2, 0.2, grosor);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0,0.15,0);
+  glScalef(ancho_palo, alto_palo, fondo_palo);
+  palo.draw(modo, 0, 0, 0, grosor);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0,0.2,0);
+  glScalef(ancho_base, alto_base, fondo_base);
+  base.draw(modo, 0, 0, 0, grosor);
   glPopMatrix();
 };
 
@@ -737,15 +765,65 @@ void _rueda::draw(_modo modo, float r, float g, float b, float grosor)
 //************************************************************************
 _puerta::_puerta()
 {
- 
+  ancho_cilindro=1.6;
+  alto_cilindro=0.05;
+  fondo_cilindro=1.6;
+
+  ancho_cilindro2=1.3;
+  alto_cilindro2=0.05;
+  fondo_cilindro2=1.3;
+
+  ancho_cubo=0.15;
+  alto_cubo=0.5;
+  fondo_cubo=0.15;
+  cilindro.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+  cilindro2.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+  cubo.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
 };
 
 void _puerta::draw(_modo modo, float r, float g, float b, float grosor)
 {
+
   glPushMatrix();
+  glTranslatef(2.5,0,0.2);
+  glScalef(ancho_cubo, alto_cubo, fondo_cubo);
+  cubo.draw(modo,0,0,0, grosor);
+  glPopMatrix();
+
+  glPushMatrix();
+  glRotatef(90,1,0,0);
+  glTranslatef(1.5,0.1,0);
+  glScalef(ancho_cilindro2, alto_cilindro2, fondo_cilindro2);
+  cilindro2.draw(modo, 1, 1, 1, grosor);
+  glPopMatrix();
+
+  glPushMatrix();
+  glRotatef(90,1,0,0);
+  glTranslatef(1.5,0,0);
+  glScalef(ancho_cilindro, alto_cilindro, fondo_cilindro);
+  cilindro.draw(modo, 0.7, 0.7, 0.7, grosor);
+  glPopMatrix();
+
+  
+};
+
+//************************************************************************
+// tambor
+//************************************************************************
+_tambor::_tambor()
+{
+  ancho=1.5;
+  alto=0.05;
+  fondo=1.5;
+  cilindro.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+};
+
+void _tambor::draw(_modo modo, float r, float g, float b, float grosor)
+{
+  glPushMatrix();
+  glRotatef(90,1,0,0);
   glScalef(ancho, alto, fondo);
-  glTranslatef(0,0.5,0);
-  cubo.draw(modo, r, g, b, grosor);
+  cilindro.draw(modo, 0, 0, 0, grosor);
   glPopMatrix();
 };
 
@@ -754,21 +832,72 @@ void _puerta::draw(_modo modo, float r, float g, float b, float grosor)
 //************************************************************************
 _cajon::_cajon()
 {
-  ancho=1.5;
-  alto=0.5;
+  ancho=1.3;
+  alto=0.2;
   fondo=2;
-  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
+  cubo.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
 };
 
 void _cajon::draw(_modo modo, float r, float g, float b, float grosor)
 {
   glPushMatrix();
   glScalef(ancho, alto, fondo);
-  glTranslatef(0.5,0,0);
-  cubo.draw(modo, r, g, b, grosor);
+  cubo.draw(modo, 0.15, 0.15, 0.15, grosor);
   glPopMatrix();
 
 };
+
+//************************************************************************
+// boton_apagado
+//************************************************************************
+_boton_apagado::_boton_apagado()
+{
+  ancho=3;
+  alto=1;
+  fondo=3;
+  cilindro.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+};
+
+void _boton_apagado::draw(_modo modo, float r, float g, float b, float grosor)
+{
+  glPushMatrix();
+  glScalef(ancho, alto, fondo);
+  cilindro.draw(modo, r, g, b, grosor);
+  glPopMatrix();
+
+};
+
+
+//************************************************************************
+// ruleta
+//************************************************************************
+_ruleta::_ruleta()
+{
+  ancho_cilindro=1.5;
+  alto_cilindro=0.05;
+  fondo_cilindro=1.5;
+
+  ancho_cubo = 0.5;
+  alto_cubo = 5;
+  fondo_cubo = 1.5;
+
+  cilindro.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+  cubo.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+};
+
+void _ruleta::draw(_modo modo, float r, float g, float b, float grosor)
+{
+  glPushMatrix();
+  glRotatef(90,1,0,0);
+  glScalef(ancho_cilindro, alto_cilindro, fondo_cilindro);
+  cilindro.draw(modo, 0, 0, 0, grosor);
+
+  glTranslatef(0,fondo_cilindro,0);
+  glScalef(ancho_cubo, alto_cubo, fondo_cubo);
+  cubo.draw(modo, 1, 1, 1, grosor);
+  glPopMatrix();
+};
+
 //************************************************************************
 // cuerpo
 //************************************************************************
@@ -777,76 +906,127 @@ _cuerpo::_cuerpo()
   ancho=4;
   alto=6;
   fondo=4;
-  colors_chess(1.0,1.0,0.0,0.0,0.0,1.0);
+  base.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
+  cubo_pequeño.colors_chess(0.8,0.8,0.8,0.0,0.0,0.0,1);
 };
 
 void _cuerpo::draw(_modo modo, float r, float g, float b, float grosor)
 {
-  // TODO: duda -> si el cuerpo tiene 2 cubos distintos, en el grafo de escena tambien?
-  // y esto sería un buen diseño?
   //cubo grande
   glPushMatrix();
   glScalef(ancho, alto, fondo);
-  glTranslatef(0,0,0);
-  cubo.draw(modo, r, g, b, grosor);
-
-  // cubo pequeño
+  base.draw(modo, 0.5, 0.5, 0.5, grosor);
+  //cubo pequeño
   glScalef(1.0,0.1,0.86);
   glTranslatef(0,5.5,-0.08);
-  cubo.draw(modo, r, g, b, grosor);
+  cubo_pequeño.draw(modo, 0.7, 0.7, 0.7, grosor);
   glPopMatrix();
 };
 
 _lavadora::_lavadora()
 {
-  // TODO: cambiar nombres variables 
-  giro_cajon = 0.0;
-  // giro_primer_brazo = 0.0;
-  // giro_primer_brazo_max = 0;
-  // giro_primer_brazo_min = -90;
-  // giro_segundo_brazo = 0.0;
-  // giro_segundo_brazo_max = 30;
-  // giro_segundo_brazo_min = 0;
-  // giro_pala = 0.0;
-  // giro_pala_max = 50.0;
-  // giro_pala_min = -90.0;
-
-  // tamanio_pala=0.15;
+  // posicones
+  posicion_cajon = 0.0;
+  posicion_lavadora_z=0.0;
+  cajon_max = 1.9;
+  cajon_min = 0.0;
+  // giros
+  giro_puerta = 0.0;
+  giro_puerta_max = 90.0;
+  giro_puerta_min = 0.0;
+  giro_tambor = 0.0;
+  giro_ruleta1_max = 180.0;
+  giro_ruleta1_min = 0.0;
+  giro_ruleta2_max = 180.0;
+  giro_ruleta2_min = 0.0;
+  // color boton apagado
+  color_r_boton = 0.5;
+  fin_lavado = 450;
 };
 
 void _lavadora::draw(_modo modo, float r, float g, float b, float grosor)
 {
-  // TODO: duda -> aqui solo se mueven los objetos completos???
+  // // LAVADORA
+
    glPushMatrix();
-
-  // sustentacion.draw(modo, r, g, b, grosor);
-
-  // glTranslatef(0,(cabina.alto+sustentacion.alto)/2.0,0);
-  // glRotatef(giro_cabina,0,1,0);
-  // cabina.draw(modo, r, g, b, grosor);
-
-  // glTranslatef(cabina.ancho/2.0,0,0);
-  // glRotatef(giro_segundo_brazo,0,0,1);
-  // brazo.draw(modo, r, g, b, grosor);
-
-  // glTranslatef(brazo.ancho,0,0);
-  // glRotatef(giro_primer_brazo,0,0,1);
-  // brazo.draw(modo, r, g, b, grosor);
   
+   glTranslatef(0,0,posicion_lavadora_z);
+    //cuerpo
+    glPushMatrix();
+    cuerpo.draw(modo, r, g, g, grosor);
+    glPopMatrix();
+    // cajon
+    glPushMatrix();
+    glTranslatef(0,0,posicion_cajon);
+    glTranslatef(-cajon.ancho + 0.1,3.25,0.5);
+    cajon.draw(modo,r,g,b,grosor);
+    glPopMatrix();
+    // puerta
+    glPushMatrix();
+    glTranslatef(-1.5,0,2.075);
+    glRotatef(-giro_puerta,0,1,0);
+    puerta.draw(modo,r,g,b,grosor);
+    glPopMatrix();
+    // tambor
+    glPushMatrix();
+    glTranslatef(0,0,1.975);
+    glRotatef(-giro_tambor,0,0,1);
+    tambor.draw(modo,r,g,b,grosor);
+    // comprobaciones para encender la luz
+    if(giro_tambor > 1)
+      color_r_boton = 1;
+    if(giro_tambor > fin_lavado)
+      color_r_boton = 0.5;
+    glPopMatrix();
 
-  
-  // glRotatef(giro_pala,0,0,1);
-  // glTranslatef(tamanio_pala,0,0); // trasladamos 
-  // glScalef(3, 3, 3);
-  
-  cuerpo.draw(modo, r, g, b, grosor);
+    // ruletas
+    glPushMatrix();
+    glTranslatef(1,3.3,1.475);
+    glRotatef(giro_ruleta1, 0,0,1);
+    glScalef(0.15,0.15,0.15);
+    ruleta1.draw(modo, r, g, b, grosor);
+    glPopMatrix();
 
-  // TODO: duda: por qué el cuerpo es 6 de alto y si trasladas 
-  //          el cajón 3.25 no está un poco mas arriba de la mitad (creo que resuelta)
-  glTranslatef(0,0,giro_cajon);
-  glTranslatef(-1.5,3.25,0);
-  cajon.draw(modo,0,0,0,grosor);
+    glPushMatrix();
+    glTranslatef(1.5,3.3,1.475);
+    glRotatef(giro_ruleta2,0,0,1);
+    glScalef(0.15,0.15,0.15);
+    ruleta2.draw(modo,r,g,b, grosor);
+    glPopMatrix();
+
+    // boton apagado
+    glPushMatrix();
+    glTranslatef(0,3.3,1.475);
+    glRotatef(270,1,0,0);
+    glScalef(0.05,0.05,0.05);
+    boton_apagado.draw(modo, color_r_boton, 0, 0, grosor);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(-1.7, -3.2, -1.7);
+    glRotatef(giro_ruedas,0,1,0);
+    rueda.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(-1.7, -3.2, 1.7);
+    glRotatef(giro_ruedas,0,1,0);
+    rueda.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(1.7,-3.2, -1.7);
+    glRotatef(giro_ruedas,0,1,0);
+    rueda.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(1.7,-3.2,1.7);
+    glRotatef(giro_ruedas,0,1,0);
+    rueda.draw(modo, r, g, b, grosor);
+    glPopMatrix();
 
   glPopMatrix();
 }
+
 

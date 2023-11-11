@@ -16,6 +16,7 @@ typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, CILINDRO, CONO, ESFERA, EXTRU
 _tipo_objeto t_objeto=CUBO;
 _modo   modo=POINTS;
 
+
 // variables que definen la posicion de la camara en coordenadas polares
 GLfloat Observer_distance;
 GLfloat Observer_angle_x;
@@ -33,12 +34,14 @@ _cubo cubo;
 _piramide piramide(0.85,1.3);
 _objeto_ply  ply; 
 _rotacion rotacion;
-_cilindro cilindro(1,2,6); 
+_cilindro cilindro(1,2,24); 
 _cono cono(1,2,6);
 _esfera esfera(1,6,6);
 _excavadora excavadora;
 _extrusion *extrusion;
 _lavadora lavadora;
+
+int paso = 0;
 
 // _objeto_ply *ply;
 
@@ -210,14 +213,13 @@ glutPostRedisplay();
 
 void special_key(int Tecla1,int x,int y)
 {
-
 switch (Tecla1){
    case GLUT_KEY_LEFT:Observer_angle_y--;break;
    case GLUT_KEY_RIGHT:Observer_angle_y++;break;
    case GLUT_KEY_UP:Observer_angle_x--;break;
    case GLUT_KEY_DOWN:Observer_angle_x++;break;
-   case GLUT_KEY_F11:Observer_distance*=1.2;break;
-   case GLUT_KEY_F12:Observer_distance/=1.2;break;
+   case GLUT_KEY_PAGE_UP:Observer_distance*=1.2;break;
+   case GLUT_KEY_PAGE_DOWN:Observer_distance/=1.2;break;
 	
 //    case GLUT_KEY_F1:excavadora.giro_cabina+=5;break;
 //    case GLUT_KEY_F2:excavadora.giro_cabina-=5;break;
@@ -240,19 +242,55 @@ switch (Tecla1){
 //         if (excavadora.giro_pala < excavadora.giro_pala_min)
 //             excavadora.giro_pala = excavadora.giro_pala_min;break;
 
-    // lavadora 
-    // TODO: cambiar variables y poner bien las medidas
-    case GLUT_KEY_F1:lavadora.giro_cajon+=0.1;
-        if(lavadora.giro_cajon>2.5)
-            lavadora.giro_cajon=2.5; break;
-    case GLUT_KEY_F2:lavadora.giro_cajon-=0.1;
-        if(lavadora.giro_cajon<0)
-            lavadora.giro_cajon=0;
+    // movimientos lavadora 
+    
+    // movimientos cajon
+    case GLUT_KEY_F1:lavadora.posicion_cajon+=0.1;
+        if(lavadora.posicion_cajon>lavadora.cajon_max)
+            lavadora.posicion_cajon=lavadora.cajon_max; break;
+
+    case GLUT_KEY_F2:lavadora.posicion_cajon-=0.1;
+        if(lavadora.posicion_cajon<lavadora.cajon_min)
+            lavadora.posicion_cajon=lavadora.cajon_min; break;
+    // giros puerta
+    case GLUT_KEY_F3:lavadora.giro_puerta+=2;
+        if(lavadora.giro_puerta > lavadora.giro_puerta_max)
+            lavadora.giro_puerta = lavadora.giro_puerta_max; break;
+
+    case GLUT_KEY_F4:lavadora.giro_puerta-=2;
+        if(lavadora.giro_puerta < lavadora.giro_puerta_min)
+            lavadora.giro_puerta = lavadora.giro_puerta_min; break;
+    // giro tambor
+    case GLUT_KEY_F5:lavadora.giro_tambor+=1;
+    if (lavadora.giro_puerta != lavadora.giro_puerta_max) {
+        lavadora.giro_tambor = 0;
+    } else {
+        lavadora.giro_tambor+=2;
+    }
+    break;
+    // giros ruletas
+    case GLUT_KEY_F6:lavadora.giro_ruleta1+=3;
+        if(lavadora.giro_ruleta1 > lavadora.giro_ruleta1_max)
+            lavadora.giro_ruleta1 = lavadora.giro_ruleta1_max; break;
+    case GLUT_KEY_F7:lavadora.giro_ruleta1-=3;
+        if(lavadora.giro_ruleta1 < lavadora.giro_ruleta1_min)
+            lavadora.giro_ruleta1 = lavadora.giro_ruleta1_min; break;
+    case GLUT_KEY_F8:lavadora.giro_ruleta2+=3;
+        if(lavadora.giro_ruleta2 > lavadora.giro_ruleta2_max)
+            lavadora.giro_ruleta2 = lavadora.giro_ruleta2_max; break;
+    case GLUT_KEY_F9:lavadora.giro_ruleta2-=3;
+        if(lavadora.giro_ruleta2 < lavadora.giro_ruleta2_min)
+            lavadora.giro_ruleta2 = lavadora.giro_ruleta2_min; break;
+    // giros ruedas y lavadora
+    case GLUT_KEY_F10:lavadora.giro_ruedas+=8;
+        lavadora.posicion_lavadora_z += 0.01; break;
+    case GLUT_KEY_F11:lavadora.giro_ruedas-=8;
+        lavadora.posicion_lavadora_z -= 0.01; break;
+    // animacion
+    case GLUT_KEY_F12:paso=1;break;
 	}
 glutPostRedisplay();
 }
-
-
 
 //***************************************************************************
 // Funcion de incializacion
@@ -270,7 +308,7 @@ void initialize(void)
     Observer_distance=10*Front_plane;
     Observer_angle_x=0;
     Observer_angle_y=0;
-
+    
     // se indica el color para limpiar la ventana	(r,v,a,al)
     // blanco=(1,1,1,1) rojo=(1,0,0,1), ...
     glClearColor(1,1,1,1);
@@ -279,8 +317,58 @@ void initialize(void)
     glEnable(GL_DEPTH_TEST);
     change_projection();
     glViewport(0,0,Window_width,Window_high);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    // color = pixel_src*pixel_src_alpha + pixel_dst*(1-pixel_src_alpha)
 }
 
+//***************************************************************************
+// ANIMACION
+//***************************************************************************
+
+void animacion(){
+    switch(paso){
+        case 1:lavadora.posicion_cajon+=0.05;
+            if(lavadora.posicion_cajon>lavadora.cajon_max - 0.05)
+                paso = 2; break;
+        case 2:lavadora.posicion_cajon-=0.05;
+            if(lavadora.posicion_cajon<lavadora.cajon_min + 0.05)
+                paso = 3; break;
+        case 3:lavadora.posicion_cajon = lavadora.cajon_min;
+            paso = 4; break;
+        case 4:lavadora.giro_ruleta1+=1;
+            if(lavadora.giro_ruleta1 > lavadora.giro_ruleta1_max/2)
+                paso = 5; break;
+        case 5:lavadora.giro_ruleta2+=1;
+            if(lavadora.giro_ruleta2 > lavadora.giro_ruleta2_max - 45 )
+                paso = 6; break;
+        case 6:lavadora.giro_puerta+=1;
+            if(lavadora.giro_puerta > lavadora.giro_puerta_max -2)
+                paso = 7; break;
+        case 7: lavadora.giro_tambor+=1;
+            if (lavadora.giro_tambor > lavadora.fin_lavado)
+                paso = 8; break;
+        case 8:lavadora.giro_puerta-=1;
+            if(lavadora.giro_puerta < lavadora.giro_puerta_min + 2)
+                paso = 9; break;
+        case 9:lavadora.giro_ruleta1-=1;
+            if(lavadora.giro_ruleta1 < lavadora.giro_ruleta1_min + 1)
+                paso = 10; break;
+        case 10:lavadora.giro_ruleta2-=1;
+            if(lavadora.giro_ruleta2 < lavadora.giro_ruleta2_min + 1 )
+                paso = 11; break;
+        case 11: lavadora.giro_ruedas+=8; lavadora.posicion_lavadora_z += 0.01;
+            if(lavadora.posicion_lavadora_z > 3)
+                paso = 12; break;
+        case 12: lavadora.giro_ruedas-=8; lavadora.posicion_lavadora_z -= 0.01;
+         if(lavadora.posicion_lavadora_z < 0.01)
+                paso = 13; break;
+        case 13: break;
+    }
+
+    glutPostRedisplay();
+}
 
 //***************************************************************************
 // Programa principal
@@ -335,7 +423,7 @@ int main(int argc, char *argv[] )
     // GLUT_RGBA -> memoria de imagen con componentes rojo, verde, azul y alfa para cada pixel
     // GLUT_DEPTH -> memoria de profundidad o z-bufer
     // GLUT_STENCIL -> memoria de estarcido_rotation Rotation;
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
     // posicion de la esquina inferior izquierdad de la ventana
     glutInitWindowPosition(Window_x,Window_y);
@@ -355,6 +443,8 @@ int main(int argc, char *argv[] )
     glutKeyboardFunc(normal_key);
     // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
     glutSpecialFunc(special_key);
+
+    glutIdleFunc(animacion);
 
     // funcion de inicialización
     initialize();
