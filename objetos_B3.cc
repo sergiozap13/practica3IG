@@ -723,8 +723,8 @@ void _excavadora::draw(_modo modo, float r, float g, float b, float grosor)
 _rueda::_rueda()
 {
   ancho_cilindro=0.1;
-  alto_cilindro = 0.1;
-  fondo_cilindro = 0.1;
+  alto_cilindro=0.1;
+  fondo_cilindro=0.1;
 
   ancho_palo = 0.03;
   alto_palo = 0.1;
@@ -958,7 +958,7 @@ void _lavadora::draw(_modo modo, float r, float g, float b, float grosor)
     // cajon
     glPushMatrix();
     glTranslatef(0,0,posicion_cajon);
-    glTranslatef(-cajon.ancho + 0.1,3.25,0.5);
+    glTranslatef(-1.2,3.25,0.5);
     cajon.draw(modo,r,g,b,grosor);
     glPopMatrix();
     // puerta
@@ -1001,7 +1001,7 @@ void _lavadora::draw(_modo modo, float r, float g, float b, float grosor)
     glScalef(0.05,0.05,0.05);
     boton_apagado.draw(modo, color_r_boton, 0, 0, grosor);
     glPopMatrix();
-
+    // ruedas
     glPushMatrix();
     glTranslatef(-1.7, -3.2, -1.7);
     glRotatef(giro_ruedas,0,1,0);
